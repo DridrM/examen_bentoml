@@ -1,0 +1,22 @@
+service: "examen-bentoml.service:Prediction"
+
+description:
+
+labels:
+   owner:
+   project:
+
+docker:
+  base_image: python:3.12-slim
+
+include:
+  - src/
+
+models:
+  - "elasticnet-bento-exam:latest"
+
+python:
+  packages:
+    - "jwt>=1.4.0"
+    - "pandas>=2.3.2"
+    - "scikit-learn>=1.7.1"
