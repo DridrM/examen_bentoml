@@ -24,11 +24,11 @@ PROCESSED_DATA_PATH = ROOT_PROJECT_PATH / "data" / "processed"
 # BentoML service #
 ###################
 
-# 
+# Duration of the token
 JWT_EXP_DELTA_MINUTES = 120
 
-# 
+# Encoding algorithm
 JWT_ALGORITHM = "HS256"
 
-# 
+# Encoding secret
 JWT_SECRET = os.environ.get("JWT_SECRET")
