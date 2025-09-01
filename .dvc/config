@@ -1,5 +1,0 @@
-[core]
-    analytics = false
-    remote = local_remote
-['remote "local_remote"']
-    url = /hdd/hadrienmn_files/data_science_projects/data/datascientest_projects/examen_bentoml

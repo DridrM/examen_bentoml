@@ -1,6 +1,9 @@
 from pathlib import Path
 
 
+# Raw data URL
+RAW_DATA_URL = "https://assets-datascientest.s3.eu-west-1.amazonaws.com/MLOPS/bentoml/admission.csv"
+
 # Root project path
 ROOT_PROJECT_PATH = Path(__file__).resolve().parents[2]
 
