@@ -1,6 +1,6 @@
 import subprocess
 
-from params import RAW_DATA_URL, RAW_DATA_PATH
+from examen_bentoml.params import RAW_DATA_URL, RAW_DATA_PATH
 
 
 try:

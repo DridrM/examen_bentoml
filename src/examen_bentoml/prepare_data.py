@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
-from params import RAW_DATA_PATH, PROCESSED_DATA_PATH
+from examen_bentoml.params import RAW_DATA_PATH, PROCESSED_DATA_PATH
 
 
 # Load raw data

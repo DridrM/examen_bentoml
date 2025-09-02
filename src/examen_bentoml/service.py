@@ -1,4 +1,3 @@
-import os
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -16,7 +15,7 @@ JWT_EXP_DELTA_MINUTES = 120
 JWT_ALGORITHM = "HS256"
 
 # Encoding secret
-JWT_SECRET = os.environ.get("JWT_SECRET")
+JWT_SECRET = "Pu3Y2MLm7tKnZFprxKr9VQyj9qLkidnexMETw8gWQdk="
 
 
 def create_jwt(username: str) -> str:

@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.linear_model import ElasticNet
 from sklearn.model_selection import GridSearchCV
 
-from params import PROCESSED_DATA_PATH
+from examen_bentoml.params import PROCESSED_DATA_PATH
 
 
 # Load processed data

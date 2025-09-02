@@ -1,4 +1,4 @@
-service: "examen_bentoml.service:Prediction"
+service: "src/examen_bentoml/service.py:Prediction"
 
 description: "file: ./README.md"
 
@@ -10,7 +10,10 @@ docker:
   base_image: "python:3.12-slim"
 
 include:
-  - "src/"
+  - "."
+
+exclude:
+  - ".env"
 
 models:
   - "elasticnet-bento-exam:latest"
@@ -20,7 +23,3 @@ python:
     - "jwt>=1.4.0"
     - "pandas>=2.3.2"
     - "scikit-learn>=1.7.1"
-
-envs:
-  - name: "JWT_SECRET"
-    value: ${JWT_SECRET}
