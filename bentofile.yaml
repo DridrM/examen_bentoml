@@ -23,4 +23,4 @@ python:
 
 envs:
   - name: "JWT_SECRET"
-    value: "$(JWT_SECRET)"
+    value: ${JWT_SECRET}

@@ -1,14 +1,22 @@
+import os
 from datetime import datetime, timedelta
 
 import numpy as np
 import jwt
 import bentoml
 
-from examen_bentoml.params import (
-    JWT_EXP_DELTA_MINUTES,
-    JWT_ALGORITHM,
-    JWT_SECRET
-)
+
+# Define params
+# =============
+
+# Duration of the token
+JWT_EXP_DELTA_MINUTES = 120
+
+# Encoding algorithm
+JWT_ALGORITHM = "HS256"
+
+# Encoding secret
+JWT_SECRET = os.environ.get("JWT_SECRET")
 
 
 def create_jwt(username: str) -> str:
