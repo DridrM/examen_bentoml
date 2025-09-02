@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 
-import numpy as np
 import pandas as pd
 import jwt
 import bentoml
+from bentoml.exceptions import BadInput
 from pydantic import BaseModel, Field
+from http import HTTPStatus
 
 
 # Define params
@@ -18,6 +19,14 @@ JWT_ALGORITHM = "HS256"
 
 # Encoding secret
 JWT_SECRET = "Pu3Y2MLm7tKnZFprxKr9VQyj9qLkidnexMETw8gWQdk="
+
+
+class InvalidCredentialsException(BadInput):
+    """
+    Exception raised when invalid credentials
+    are specified with error code 401.
+    """
+    error_code = HTTPStatus.UNAUTHORIZED
 
 
 class Features(BaseModel):
@@ -84,7 +93,8 @@ def verify_jwt(context: bentoml.Context) -> None:
     None.
     """
     # Verify the request format
-    auth_header = context.request.headers.get("Authorization")
+    print(context.request.headers)
+    auth_header = context.request.headers.get("authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         
         return None
@@ -99,10 +109,10 @@ def verify_jwt(context: bentoml.Context) -> None:
         return payload
     
     except jwt.ExpiredSignatureError:
-        raise bentoml.exceptions.BadInput("Token has expired")
+        raise InvalidCredentialsException("Token has expired")
     
     except jwt.InvalidTokenError:
-        raise bentoml.exceptions.BadInput("Invalid token")
+        raise InvalidCredentialsException("Invalid token")
 
 
 @bentoml.service(resources={"cpu": "2"}, traffic={"timeout": 20})
@@ -119,7 +129,7 @@ class Prediction:
         self.model = bentoml.sklearn.load_model(self.bento_model)
     
     @bentoml.api
-    async def login(self, credentials: Credentials) -> dict:
+    def login(self, credentials: Credentials) -> dict:
         """
         Grant access to authorized users.
         """
@@ -133,10 +143,11 @@ class Prediction:
             
             return {"access_token": token, "token_type": "Bearer"}
 
-        return {"error": "Invalid credentials"}
+        else:
+            raise InvalidCredentialsException("Invalid credentials")
     
     @bentoml.api
-    async def predict(self, features: Features, context: bentoml.Context) -> np.ndarray:
+    def predict(self, features: Features, context: bentoml.Context) -> dict[str, float]:
         """
         Predict given input data after veryfying
         the token and the features.
@@ -144,9 +155,11 @@ class Prediction:
         # Verify token
         claims = verify_jwt(context)
         if not claims:
-            return {"error": "Unauthorized"}
+            raise InvalidCredentialsException("Unauthorized")
 
         # Predict
-        X = pd.DataFrame(features.__dict__)
+        X = pd.DataFrame.from_dict(
+            {col: [value] for col, value in features.model_dump(by_alias=True).items()}
+        )
         
-        return self.model.predict(X)
+        return {"acceptance": float(self.model.predict(X))}
