@@ -20,3 +20,17 @@ build-backend = "uv_build"
 dev = [
     "pytest>=8.4.1",
 ]
+
+[tool.bentoml.build]
+service = "examen_bentoml.service:Prediction"
+description = "file: ./README.md"
+include = ["src/*.py"]
+models = ["elasticnet-bento-exam:latest"]
+
+[tool.bentoml.build.labels]
+owner = "DridrM"
+project = "Examen BentoML"
+
+[tool.bentoml.build.docker]
+distro = "debian"
+python_version = "3.12"
