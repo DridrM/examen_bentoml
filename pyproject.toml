@@ -5,7 +5,6 @@ description = "Exam BentoML"
 requires-python = ">=3.12"
 dependencies = [
     "bentoml>=1.4.22",
-    "jwt>=1.4.0",
     "pandas>=2.3.2",
     "pyjwt>=2.10.1",
     "requests>=2.32.5",
@@ -22,9 +21,9 @@ dev = [
 ]
 
 [tool.bentoml.build]
-service = "examen_bentoml.service:Prediction"
+service = "src.examen_bentoml.service:Prediction"
 description = "file: ./README.md"
-include = ["src/*.py"]
+include = ["src/"]
 models = ["elasticnet-bento-exam:latest"]
 
 [tool.bentoml.build.labels]

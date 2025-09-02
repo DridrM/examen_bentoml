@@ -1,4 +1,4 @@
-service: "src/examen_bentoml/service.py:Prediction"
+service: "src.examen_bentoml.service:Prediction"
 
 description: "file: ./README.md"
 
@@ -11,16 +11,15 @@ docker:
   
 
 include:
-  - "."
-
-exclude:
-  - ".env"
+  - "src/"
 
 models:
   - "elasticnet-bento-exam:latest"
 
 python:
   packages:
-    - "pyjwt==2.10.1"
+    - "bentoml>=1.4.22"
     - "pandas>=2.3.2"
+    - "pyjwt>=2.10.1"
+    - "requests>=2.32.5"
     - "scikit-learn>=1.7.1"
