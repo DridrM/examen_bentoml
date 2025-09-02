@@ -3,15 +3,13 @@ from datetime import datetime, timedelta
 import numpy as np
 import jwt
 import bentoml
-from bentoml.io import JSON
-from starlette.requests import Request
-from starlette.responses import JSONResponse
 
-from params import (
-    JWT_EXP_DELTA_MINUTES,
-    JWT_ALGORITHM,
-    JWT_SECRET
-)
+with bentoml.importing():
+    from params import (
+        JWT_EXP_DELTA_MINUTES,
+        JWT_ALGORITHM,
+        JWT_SECRET
+    )
 
 
 def create_jwt(username: str) -> str:
@@ -41,7 +39,7 @@ def create_jwt(username: str) -> str:
     return token
 
 
-def verify_jwt(request: Request) -> None:
+def verify_jwt(context: bentoml.Context) -> None:
     """
     Extract and verify JWT from the Authorization header.
     
@@ -55,7 +53,7 @@ def verify_jwt(request: Request) -> None:
     None.
     """
     # Verify the request format
-    auth_header = request.headers.get("Authorization")
+    auth_header = context.request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         
         return None
@@ -89,7 +87,7 @@ class Prediction:
         """
         self.model = bentoml.sklearn.load_model(self.bento_model)
     
-    @bentoml.api(input=JSON(), output=JSON())
+    @bentoml.api
     async def login(self, credentials: dict) -> dict:
         """
         Grant access to authorized users.
@@ -104,30 +102,20 @@ class Prediction:
             
             return {"access_token": token, "token_type": "bearer"}
 
-        return JSONResponse({"error": "Invalid credentials"}, status_code=401)
+        return {"error": "Invalid credentials"}
     
-    @bentoml.api(input=JSON(), output=JSON())
-    async def predict(self, input_data: dict, request: Request) -> dict:
+    @bentoml.api
+    async def predict(self, features: np.ndarray, context: bentoml.Context) -> np.ndarray:
         """
         Predict given input data after veryfying
         the token and the features.
         """
         # Verify token
-        claims = verify_jwt(request)
+        claims = verify_jwt(context)
         if claims is None:
-            return JSONResponse({"error": "Unauthorized"}, status_code=401)
-        
-        # Extract features
-        features = input_data.get("features")
-        if features is None:
-            return JSONResponse({"error": "Missing 'features' field"}, status_code=400)
-
-        # Convert to numpy array
-        X = np.array(features).reshape(1, -1)
+            return {"error": "Unauthorized"}
 
         # Predict
-        prediction = self.model.predict(X)
-        
-        return {"prediction": float(prediction[0])}
+        return self.model.predict(features)
         
         
