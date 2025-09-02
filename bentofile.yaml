@@ -1,4 +1,4 @@
-service: "src.examen-bentoml.service:Prediction"
+service: "examen-bentoml.service:Prediction"
 
 description: "file: ./README.md"
 
