@@ -19,12 +19,6 @@ y = raw_data[["Chance of Admit "]]
 # Train-test split
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7)
 
-# Min-max scale the continuous variable as we want to use a linear model
-scaler = MinMaxScaler()
-scaler.fit(X_train)
-X_train = pd.DataFrame(scaler.transform(X_train), columns=scaler.get_feature_names_out())
-X_test = pd.DataFrame(scaler.transform(X_test), columns=scaler.get_feature_names_out())
-
 # Save processed data
 # ===================
 

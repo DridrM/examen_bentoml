@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
 
 import numpy as np
+import pandas as pd
 import jwt
 import bentoml
+from pydantic import BaseModel, Field
 
 
 # Define params
@@ -16,6 +18,29 @@ JWT_ALGORITHM = "HS256"
 
 # Encoding secret
 JWT_SECRET = "Pu3Y2MLm7tKnZFprxKr9VQyj9qLkidnexMETw8gWQdk="
+
+
+class Features(BaseModel):
+    """
+    Give more information about the 
+    features inside the API doc.
+    """
+    gre_score: float = Field(alias="GRE Score", ge=0, le=340, description="Score at the GRE test")
+    toefl_score: float = Field(alias="TOEFL Score", ge=0, le=120, description="Score at the TOEFL test")
+    university_rating: float = Field(alias="University Rating", ge=0, le=5, description="University rating")
+    sop: float = Field(alias="SOP", ge=0, le=5, description="Statement of Purpose")
+    lor: float = Field(alias="LOR ", ge=0, le=5, description="Letter of recommendation")
+    cgpa: float = Field(alias="CGPA", ge=0, le=10, description="Cumulative Grade Point Average")
+    research: int = Field(alias="Research", ge=0, le=1, description="Experience in research")
+
+
+class Credentials(BaseModel):
+    """
+    Class representing the credentials.
+    Give more info inside the API doc.
+    """
+    username: str = Field(description="Name of the user")
+    password: str = Field(description="User's password")
 
 
 def create_jwt(username: str) -> str:
@@ -94,32 +119,34 @@ class Prediction:
         self.model = bentoml.sklearn.load_model(self.bento_model)
     
     @bentoml.api
-    async def login(self, credentials: dict) -> dict:
+    async def login(self, credentials: Credentials) -> dict:
         """
         Grant access to authorized users.
         """
         # Extract username and password
-        username = credentials.get("username")
-        password = credentials.get("password")
+        username = credentials.username
+        password = credentials.password
         
         # Check username and password -> Very basic for the sake of the exercise
         if username == "admin" and password == "password":
             token = create_jwt(username)
             
-            return {"access_token": token, "token_type": "bearer"}
+            return {"access_token": token, "token_type": "Bearer"}
 
         return {"error": "Invalid credentials"}
     
     @bentoml.api
-    async def predict(self, features: np.ndarray, context: bentoml.Context) -> np.ndarray:
+    async def predict(self, features: Features, context: bentoml.Context) -> np.ndarray:
         """
         Predict given input data after veryfying
         the token and the features.
         """
         # Verify token
         claims = verify_jwt(context)
-        if claims is None:
+        if not claims:
             return {"error": "Unauthorized"}
 
         # Predict
-        return self.model.predict(features)
+        X = pd.DataFrame(features.__dict__)
+        
+        return self.model.predict(X)

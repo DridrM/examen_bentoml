@@ -20,6 +20,6 @@ models:
 
 python:
   packages:
-    - "jwt>=1.4.0"
+    - "pyjwt==2.10.1"
     - "pandas>=2.3.2"
     - "scikit-learn>=1.7.1"

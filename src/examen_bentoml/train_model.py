@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import ElasticNet
 from sklearn.model_selection import GridSearchCV
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import MinMaxScaler
 
 from examen_bentoml.params import PROCESSED_DATA_PATH
 
@@ -18,15 +20,21 @@ y_test = pd.read_pickle(PROCESSED_DATA_PATH / "y_test.pkl")
 # Train model on train set with grid search cv
 # ============================================
 
+# Estimator with min max scaler
+estimator = make_pipeline(
+    MinMaxScaler(),
+    ElasticNet(random_state=42)
+)
+
 # Params grid
 grid = {
-    "alpha": np.linspace(0.01, 1, 10),
-    "l1_ratio": np.linspace(0.01, 1, 10)
+    "elasticnet__alpha": np.linspace(0.01, 1, 10),
+    "elasticnet__l1_ratio": np.linspace(0.01, 1, 10)
 }
 
 # Instanciate the grid search
 grid_search = GridSearchCV(
-    estimator=ElasticNet(random_state=42),
+    estimator=estimator,
     param_grid=grid,
     cv=5,
     scoring="r2"
