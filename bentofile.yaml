@@ -10,7 +10,7 @@ docker:
   base_image: "python:3.12-slim"
 
 include:
-  - "src/examen-bentoml/params.py"
+  - "src/"
 
 models:
   - "elasticnet-bento-exam:latest"

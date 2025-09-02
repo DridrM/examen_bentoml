@@ -4,12 +4,11 @@ import numpy as np
 import jwt
 import bentoml
 
-with bentoml.importing():
-    from params import (
-        JWT_EXP_DELTA_MINUTES,
-        JWT_ALGORITHM,
-        JWT_SECRET
-    )
+from examen_bentoml.params import (
+    JWT_EXP_DELTA_MINUTES,
+    JWT_ALGORITHM,
+    JWT_SECRET
+)
 
 
 def create_jwt(username: str) -> str:
@@ -117,5 +116,3 @@ class Prediction:
 
         # Predict
         return self.model.predict(features)
-        
-        
