@@ -112,3 +112,6 @@ site/
 
 # Lightning logs
 lightning_logs/
+
+# Tar archives
+*.tar

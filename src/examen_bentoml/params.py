@@ -19,6 +19,9 @@ RAW_DATA_PATH = ROOT_PROJECT_PATH / "data" / "raw"
 # Processed data path
 PROCESSED_DATA_PATH = ROOT_PROJECT_PATH / "data" / "processed"
 
+# Local models folder
+SAVED_MODEL_PATH = ROOT_PROJECT_PATH / "models"
+
 
 ###################
 # BentoML service #

@@ -1,3 +1,5 @@
+from pickle import dump
+
 import bentoml
 import numpy as np
 import pandas as pd
@@ -6,7 +8,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler
 
-from examen_bentoml.params import PROCESSED_DATA_PATH
+from examen_bentoml.params import PROCESSED_DATA_PATH, SAVED_MODEL_PATH
 
 
 # Load processed data
@@ -54,6 +56,10 @@ print("R2 score on the test set:", grid_search.score(X_test, y_test)) # Score on
 
 # Instanciate best model
 best_model = grid_search.best_estimator_
+
+# Save last trained model to pickle into the 'models' folder
+with open(SAVED_MODEL_PATH / "elasticnet-bento-exam.pkl", "wb") as f:
+    dump(best_model, f, protocol=5)
 
 # Save into BentoML model store
 bento_model = bentoml.sklearn.save_model("elasticnet-bento-exam", best_model)
